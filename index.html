@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+    <script>
+        async function predictDiabetes(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Gather input values
+            const pregnancies = document.getElementById("pregnancies").value;
+            const glucose = document.getElementById("glucose").value;
+            const bloodPressure = document.getElementById("bloodPressure").value;
+            const skinThickness = document.getElementById("skinThickness").value;
+            const insulin = document.getElementById("insulin").value;
+            const bmi = document.getElementById("bmi").value;
+            const diabetesPedigreeFunction = document.getElementById("diabetesPedigreeFunction").value;
+            const age = document.getElementById("age").value;
+
+            // Prepare the data to send
+            const inputData = {
+                features: [pregnancies, glucose, bloodPressure, skinThickness, insulin, bmi, diabetesPedigreeFunction, age]
+            };
+
+            // Send a POST request to the Flask API
+            const response = await fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(inputData)
+            });
+
+            if (!response.ok)
+            {
+                const errorMessage = await response.text();
+                console.error('Error:', errorMessage);
+                document.getElementById("result").innerText = 'Error occurred while predicting.';
+                return;
+            }
+
+            // Handle the response
+            const result = await response.json();
+            document.getElementById("result").innerText = `Prediction: ${result.prediction ? 'Diabetes' : 'No Diabetes'}`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Diabetes Prediction</h1>
+    <form id="predictionForm" onsubmit="predictDiabetes(event)">
+        <label for="pregnancies">Pregnancies:</label>
+        <input type="number" id="pregnancies" name="pregnancies" required><br><br>
+
+        <label for="glucose">Glucose:</label>
+        <input type="number" id="glucose" name="glucose" required><br><br>
+
+        <label for="bloodPressure">Blood Pressure:</label>
+        <input type="number" id="bloodPressure" name="bloodPressure" required><br><br>
+
+        <label for="skinThickness">Skin Thickness:</label>
+        <input type="number" id="skinThickness" name="skinThickness" required><br><br>
+
+        <label for="insulin">Insulin:</label>
+        <input type="number" id="insulin" name="insulin" required><br><br>
+
+        <label for="bmi">BMI:</label>
+        <input type="number" step="0.01" id="bmi" name="bmi" required><br><br>
+
+        <label for="diabetesPedigreeFunction">Diabetes Pedigree Function:</label>
+        <input type="number" step="0.01" id="diabetesPedigreeFunction" name="diabetesPedigreeFunction" required><br><br>
+
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" required><br><br>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <h2 id="result"></h2>
+</body>
+</html>
