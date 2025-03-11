@@ -28,9 +28,9 @@ curl -X POST -H "Content-Type: application/json" \
 http://localhost:5000/predict
 
 curl http://localhost:5000/evaluate
+```
 
-
-**Important Notes:**
+# **Important Notes:**
 1. Make sure you have these files in your project directory:
    - `diabetes_model.pth` (pretrained model)
    - `scaler_diabetes.pkl` (preprocessing scaler)
